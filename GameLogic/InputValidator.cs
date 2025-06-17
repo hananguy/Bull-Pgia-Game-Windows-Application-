@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
-using UI;
 
 
 namespace GameLogic
@@ -26,7 +25,7 @@ namespace GameLogic
 			if (guessWithoutSpaces.Length != r_ExpectedLength)
 			{
 				isValid = false;
-				errorMessage = string.Format(Messages.Error_LengthMismatch, r_ExpectedLength);
+				errorMessage = string.Format("");
 			}
 			else
 			{
@@ -37,14 +36,14 @@ namespace GameLogic
 					if (!char.IsUpper(c))
 					{
 						isValid = false;
-						errorMessage = string.Format(Messages.Error_NotUppercase, c);
+						errorMessage = string.Format("");
 						break;
 					}
 
 					if (!r_AllowedLetters.Contains(c))
 					{
 						isValid = false;
-						errorMessage = string.Format(Messages.Error_NotAllowedChar, c);
+						errorMessage = string.Format("");
 						break;
 					}
 
@@ -53,7 +52,7 @@ namespace GameLogic
 						if (guessWithoutSpaces[j] == c)
 						{
 							isValid = false;
-							errorMessage = Messages.Error_Duplicates;
+							errorMessage = "";
 							break;
 						}
 					}

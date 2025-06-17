@@ -76,7 +76,3 @@ namespace GameLogic
 	}
 }
 
-internal class Board
-	{
-	}
-}
