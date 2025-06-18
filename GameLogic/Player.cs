@@ -25,7 +25,7 @@ namespace GameLogic
 			m_LastGuess = i_Guess;
 		}
 
-		public SecretCode CurrentSecretCode
+		public SecretCode Code
 		{
 			get { return m_LastGuess; }
 			set { m_LastGuess = value; }

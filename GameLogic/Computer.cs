@@ -33,7 +33,7 @@ namespace GameLogic
 				}
 			}
 
-			m_Secret = new SecretCode(string.Join(" ", secretChars));
+			m_Secret = new SecretCode(new string(secretChars));
 		}
 
 		public SecretCode SecretCode

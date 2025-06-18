@@ -4,42 +4,65 @@ using System.Windows.Forms;
 using System;
 using GameUI;
 using GameLogic;
+using System.Text;
 
 public partial class GameForm : Form
 {
 	private readonly int m_NumberOfChances;
+
 	private List<List<Button>> m_ColorGuessButtons = new List<List<Button>>();
 	private List<Button> m_ArrowButtons = new List<Button>();
 	private List<List<Panel>> m_FeedbackPanels = new List<List<Panel>>();
 	private List<Button> m_ComputerChooseButtons = new List<Button>();
-	private Dictionary<string, string> m_ColorsToChar;
+	private Dictionary<string, string> m_ColorToLetter;
+	private Dictionary<string, string> m_LetterToColor;
+
 	private Game m_GameLogic;
+	private FeedBack m_FeedBack;
 
 
 	private void InitializeComponent()
 	{
 		InitializeButtons();
-		InitializeDictionary();
+		InitializeColorToLetterDictionary();
+		InitializeLetterToColorDictionary();
+		InitiallizeCompuerSecretCode(m_GameLogic);
 	}
 	public GameForm(int i_NumberOfChances)
 	{
 		m_GameLogic = new Game();
+		m_FeedBack  = new FeedBack();
 		m_GameLogic.NumberOfGuessesChoosenByUser = i_NumberOfChances;
 		m_NumberOfChances = i_NumberOfChances;
 		InitializeComponent();
+		InitiallizeCompuerSecretCode(m_GameLogic);
+		ShowComputerChoosenColors();
 	}
 
-	void InitializeDictionary()
+	void InitializeColorToLetterDictionary()
 	{
-		m_ColorsToChar = new Dictionary<string, string>();
-		m_ColorsToChar.Add("Purple", "A");
-		m_ColorsToChar.Add("Red", "B");
-		m_ColorsToChar.Add("Green", "C");
-		m_ColorsToChar.Add("LightBlue", "D");
-		m_ColorsToChar.Add("Blue", "E");
-		m_ColorsToChar.Add("Yellow", "F");
-		m_ColorsToChar.Add("Brown", "G");
-		m_ColorsToChar.Add("White", "H");
+		m_ColorToLetter = new Dictionary<string, string>();
+		m_ColorToLetter.Add("Fuchsia", "A");
+		m_ColorToLetter.Add("Red", "B");
+		m_ColorToLetter.Add("Lime", "C");
+		m_ColorToLetter.Add("Aqua", "D");
+		m_ColorToLetter.Add("Blue", "E");
+		m_ColorToLetter.Add("Yellow", "F");
+		m_ColorToLetter.Add("Brown", "G");
+		m_ColorToLetter.Add("White", "H");
+	}
+	void InitializeLetterToColorDictionary()
+	{
+		m_LetterToColor = new Dictionary<string, string>();
+		m_LetterToColor.Add("A", "Fuchsia");
+		m_LetterToColor.Add("B", "Red");
+		m_LetterToColor.Add("C", "Lime");
+		m_LetterToColor.Add("D", "Aqua");
+		m_LetterToColor.Add("E", "Blue");
+		m_LetterToColor.Add("F", "Yellow");
+		m_LetterToColor.Add("G", "Brown");
+		m_LetterToColor.Add("H", "White");
+
 	}
 	private void InitializeButtons()
 	{
@@ -64,12 +87,25 @@ public partial class GameForm : Form
 
 		this.ClientSize = new Size(totalWidth, totalHeight);
 	}
-
+	public void InitiallizeCompuerSecretCode(Game i_GameLogic)
+	{
+		m_GameLogic.ComputerPlayer.CreateSecretCode(m_GameLogic.AvailableLetters, m_GameLogic.NumberOfPinsToGuess);
+	}
+	public void ShowComputerChoosenColors()
+	{
+		string colorByString;
+		string computerCode = m_GameLogic.ComputerPlayer.SecretCode.Code;
+		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
+		{
+			colorByString = m_LetterToColor[computerCode[i].ToString()];
+			m_ComputerChooseButtons[i].BackColor = Color.FromName(colorByString);
+		}
+	}
 	private void CreateComputerChooseButtons(int buttonSize, int spacing, int topMargin)
 	{
 		for (int col = 0; col < 4; col++)
 		{
-			System.Windows.Forms.Button compBtn = new System.Windows.Forms.Button();
+			Button compBtn = new Button();
 			compBtn.Size = new Size(buttonSize, buttonSize);
 			compBtn.Location = new Point(col * (buttonSize + spacing), topMargin);
 			compBtn.Enabled = false;
@@ -195,6 +231,7 @@ public partial class GameForm : Form
 	{
 		Button clickedButton = sender as Button;
 		Color guessColor = GetGuessColorFromUser();
+
 		if(IsNewColor(guessColor))
 		{
 			clickedButton.BackColor = guessColor;
@@ -212,7 +249,19 @@ public partial class GameForm : Form
 	private void ArrowButton_Click(Object sender, EventArgs e)
 	{
 		Button clickedCurrentArrowButton = sender as Button;
-
+		StringBuilder playerGuess = new StringBuilder();
+		string ColorOfButtonAsString;
+		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
+		{
+			ColorOfButtonAsString = m_ColorToLetter[m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor.Name];
+			playerGuess.Append(ColorOfButtonAsString);
+		}
+		m_GameLogic.HumanPlayer.SetSecretCode(playerGuess.ToString());
+		SecretCode computerSecretCode = m_GameLogic.ComputerPlayer.SecretCode;
+		SecretCode userSecretCode = m_GameLogic.HumanPlayer.Code;
+		m_FeedBack.Evaluate(userSecretCode, computerSecretCode);
+		string bullsAndHits = m_FeedBack.CreateBullsHitsString();
+		this.Text = bullsAndHits;
 		//Check the user Guess
 		//
 		//
@@ -220,9 +269,9 @@ public partial class GameForm : Form
 		//
 		//
 
-		//Turn on next row of guesses
+		//Turn on next row of guesses if the user didn't win yet.
 		DiasbleButtonRow(m_GameLogic.CurrentUserTurn);
-		if (m_GameLogic.CurrentUserTurn < m_GameLogic.NumberOfGuessesChoosenByUser)
+		if (m_GameLogic.CurrentUserTurn + 1 < m_GameLogic.NumberOfGuessesChoosenByUser)
 		{
 			m_GameLogic.CurrentUserTurn++;
 			EnableUserButtonRow(m_GameLogic.CurrentUserTurn);

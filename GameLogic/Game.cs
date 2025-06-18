@@ -23,14 +23,22 @@ namespace GameLogic
 
 		public Game()
 		{
-
+			m_Computer = new Computer();
+			m_Player = new Player();
 		}
 		public int NumberOfGuessesChoosenByUser
 		{
 			get { return m_NumberOfGuessesChoosenByUser; }
 			set { m_NumberOfGuessesChoosenByUser = value; }
 		}
-
+		public Computer ComputerPlayer
+		{
+			get { return m_Computer; }
+		}
+		public Player HumanPlayer
+		{
+			get { return m_Player; }
+		}
 
 		public int NumberOfPinsToGuess
 		{
@@ -51,6 +59,10 @@ namespace GameLogic
 			get { return k_MaxNumberOfChances; }
 		}
 
+		public char[] AvailableLetters
+		{
+			get { return m_AllowedLetters; }
+		}
 		private void InitializeGame(int i_NumberOfGuesses)
 		{
 			m_MaxNumberOfGuesses = i_NumberOfGuesses;
