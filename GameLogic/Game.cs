@@ -12,7 +12,10 @@ namespace GameLogic
 		private Player m_Player;
 		private Board m_Board;
 		private InputValidator m_Validator;
+		private int m_CurrentUserTurn = 0;
+		private const int k_NumberOfPinsToGuess = 4;
 		private int m_MaxNumberOfGuesses;
+		private int m_NumberOfGuessesChoosenByUser;
 		readonly int k_MinNumberOfChances = 4;
 		readonly int k_MaxNumberOfChances = 10;
 		private const int k_SecretCodeLength = 4;
@@ -21,6 +24,22 @@ namespace GameLogic
 		public Game()
 		{
 
+		}
+		public int NumberOfGuessesChoosenByUser
+		{
+			get { return m_NumberOfGuessesChoosenByUser; }
+			set { m_NumberOfGuessesChoosenByUser = value; }
+		}
+
+
+		public int NumberOfPinsToGuess
+		{
+			get { return k_NumberOfPinsToGuess; }
+		}
+		public int CurrentUserTurn
+		{
+			get { return m_CurrentUserTurn; }
+			set { m_CurrentUserTurn = value; }
 		}
 
 		public int MinNumberOfChances

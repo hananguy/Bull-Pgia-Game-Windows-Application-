@@ -16,8 +16,8 @@ namespace GameUI
 		int m_CurrentNumberOfChances;
 		public readonly int k_MinNumberOfChances;
 		public readonly int k_MaxNumberOfChances;
-		Label m_NumberOfChances;
-		Button m_Start;
+		private Label m_NumberOfChances;
+		private Button m_Start;
 		public StartGameForm(int i_MinNumberOfChances, int i_MaxNumberOfChances)
 		{
 			k_MinNumberOfChances = i_MinNumberOfChances;
@@ -69,11 +69,17 @@ namespace GameUI
 
 		public void m_Start_Click(object sender, EventArgs e)
 		{
-			this.Hide();
-			GameForm gameForm = new GameForm(m_CurrentNumberOfChances);
-			gameForm.ShowDialog();
+			this.Close();
+			//GameForm gameForm = new GameForm(m_CurrentNumberOfChances);
+			//gameForm.ShowDialog();
 		}
 
+		public int NumberOfGuesses
+		{
+			get { return m_CurrentNumberOfChances; }
+		}
+
+		
 		public void m_NumberOfChances_Click(object sender, EventArgs e)
 		{
 			m_CurrentNumberOfChances++;
@@ -83,7 +89,7 @@ namespace GameUI
 				m_CurrentNumberOfChances = k_MinNumberOfChances;
 			}
 
-			this.m_NumberOfChances.Text = "Number Of Chances: " + m_CurrentNumberOfChances.ToString();
+			this.m_NumberOfChances.Text = string.Format("Number Of Chances: {0}", m_CurrentNumberOfChances);
 			
 		}
 	}

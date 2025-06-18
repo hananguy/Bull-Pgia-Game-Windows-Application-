@@ -10,9 +10,8 @@ namespace GameUI
 	{
 		static void Main()
 		{
-			Game game = new Game();
-			StartGameForm startGameForm = new StartGameForm(game.MinNumberOfChances,game.MaxNumberOfChances);
-			startGameForm.ShowDialog();	
+			GameRun game = new GameRun();
+			game.Run();
 		}
 	}
 }
