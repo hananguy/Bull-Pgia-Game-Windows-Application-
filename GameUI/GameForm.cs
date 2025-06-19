@@ -8,35 +8,28 @@ using System.Text;
 
 public partial class GameForm : Form
 {
-	private readonly int m_NumberOfChances;
-
 	private List<List<Button>> m_ColorGuessButtons = new List<List<Button>>();
 	private List<Button> m_ArrowButtons = new List<Button>();
 	private List<List<Panel>> m_FeedbackPanels = new List<List<Panel>>();
 	private List<Button> m_ComputerChooseButtons = new List<Button>();
 	private Dictionary<string, string> m_ColorToLetter;
 	private Dictionary<string, string> m_LetterToColor;
-
 	private Game m_GameLogic;
 	private FeedBack m_FeedBack;
 
 
 	private void InitializeComponent()
 	{
-		InitializeButtons();
+		InitializeFormAndButtons();
 		InitializeColorToLetterDictionary();
 		InitializeLetterToColorDictionary();
-		InitiallizeCompuerSecretCode(m_GameLogic);
 	}
 	public GameForm(int i_NumberOfChances)
 	{
-		m_GameLogic = new Game();
+		m_GameLogic = new Game(i_NumberOfChances);
 		m_FeedBack  = new FeedBack();
-		m_GameLogic.NumberOfGuessesChoosenByUser = i_NumberOfChances;
-		m_NumberOfChances = i_NumberOfChances;
 		InitializeComponent();
 		InitiallizeCompuerSecretCode(m_GameLogic);
-		ShowComputerChoosenColors();
 	}
 
 	void InitializeColorToLetterDictionary()
@@ -64,7 +57,7 @@ public partial class GameForm : Form
 		m_LetterToColor.Add("H", "White");
 
 	}
-	private void InitializeButtons()
+	private void InitializeFormAndButtons()
 	{
 		int buttonSize = 40;
 		int spacing = 10;
@@ -80,11 +73,12 @@ public partial class GameForm : Form
 
 		//The Current Form Size
 		int totalWidth = 4 * (buttonSize + spacing) + spacing + arrowWidth + spacing + 2 * (feedbackSize + feedbackSpacing);
-		int totalHeight = topMargin + buttonSize + computerRowSpacing + m_NumberOfChances * (buttonSize + spacing);
+		int totalHeight = topMargin + buttonSize + computerRowSpacing + m_GameLogic.NumberOfGuessesChoosenByUser * (buttonSize + spacing);
 
 		totalWidth += 40;
 		totalHeight += 10;
 
+		this.Text = "Bull Pgia";
 		this.ClientSize = new Size(totalWidth, totalHeight);
 	}
 	public void InitiallizeCompuerSecretCode(Game i_GameLogic)
@@ -103,9 +97,10 @@ public partial class GameForm : Form
 	}
 	private void CreateComputerChooseButtons(int buttonSize, int spacing, int topMargin)
 	{
-		for (int col = 0; col < 4; col++)
+		for (int col = 0; col < m_GameLogic.NumberOfPinsToGuess; col++)
 		{
 			Button compBtn = new Button();
+			compBtn.BackColor = Color.Black;
 			compBtn.Size = new Size(buttonSize, buttonSize);
 			compBtn.Location = new Point(col * (buttonSize + spacing), topMargin);
 			compBtn.Enabled = false;
@@ -249,34 +244,66 @@ public partial class GameForm : Form
 	private void ArrowButton_Click(Object sender, EventArgs e)
 	{
 		Button clickedCurrentArrowButton = sender as Button;
+		string userGuess = GetUserGuessesAsString();
+		m_GameLogic.HumanPlayer.SetSecretCode(userGuess);
+		SecretCode computerSecretCode = m_GameLogic.ComputerPlayer.SecretCode;
+		SecretCode userSecretCode = m_GameLogic.HumanPlayer.Code;
+		m_FeedBack.Evaluate(userSecretCode, computerSecretCode);
+		
+		MarkBullAndHitsOnPanels(m_FeedBack.NumberOfHits, m_FeedBack.NumberOfBulls);
+		if(UserWin(m_FeedBack.NumberOfBulls) == true)
+		{
+			ShowComputerChoosenColors();
+			return;
+		}
+		else
+		{
+			DiasbleButtonRow(m_GameLogic.CurrentUserTurn);
+			if (m_GameLogic.CurrentUserTurn + 1 < m_GameLogic.NumberOfGuessesChoosenByUser)
+			{
+				m_GameLogic.CurrentUserTurn++;
+				EnableUserButtonRow(m_GameLogic.CurrentUserTurn);
+			}
+			clickedCurrentArrowButton.Enabled = false;
+		}
+		
+	}
+	public bool UserWin(int i_NumberOfBulls)
+	{
+		bool isUserWin = false;
+		if (i_NumberOfBulls == m_GameLogic.NumberOfPinsToGuess)
+		{
+			isUserWin = true;
+		}
+
+		return isUserWin;
+	}
+	string GetUserGuessesAsString()
+	{
 		StringBuilder playerGuess = new StringBuilder();
 		string ColorOfButtonAsString;
-		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
+		for (int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
 		{
 			ColorOfButtonAsString = m_ColorToLetter[m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor.Name];
 			playerGuess.Append(ColorOfButtonAsString);
 		}
-		m_GameLogic.HumanPlayer.SetSecretCode(playerGuess.ToString());
-		SecretCode computerSecretCode = m_GameLogic.ComputerPlayer.SecretCode;
-		SecretCode userSecretCode = m_GameLogic.HumanPlayer.Code;
-		m_FeedBack.Evaluate(userSecretCode, computerSecretCode);
-		string bullsAndHits = m_FeedBack.CreateBullsHitsString();
-		this.Text = bullsAndHits;
-		//Check the user Guess
-		//
-		//
-		//
-		//
-		//
-
-		//Turn on next row of guesses if the user didn't win yet.
-		DiasbleButtonRow(m_GameLogic.CurrentUserTurn);
-		if (m_GameLogic.CurrentUserTurn + 1 < m_GameLogic.NumberOfGuessesChoosenByUser)
+		return playerGuess.ToString();
+	}
+	void MarkBullAndHitsOnPanels(int i_NumberOfHits, int i_NumberOfBulls)
+	{
+		int idx = 0;
+		int j;
+		for (j = 0; j < i_NumberOfBulls; j++)
 		{
-			m_GameLogic.CurrentUserTurn++;
-			EnableUserButtonRow(m_GameLogic.CurrentUserTurn);
+			m_FeedbackPanels[m_GameLogic.CurrentUserTurn][idx].BackColor = Color.Black;
+			idx++;
 		}
-		clickedCurrentArrowButton.Enabled = false;
+
+		for (j = 0; j < i_NumberOfHits; j++)
+		{
+			m_FeedbackPanels[m_GameLogic.CurrentUserTurn][idx].BackColor = Color.Yellow;
+			idx++;
+		}
 	}
 	public bool IsRowFilled()
 	{
@@ -299,6 +326,4 @@ public partial class GameForm : Form
 		color = colorPicking.UserPickedColor;
 		return color;
 	}
-
-
 }

@@ -12,10 +12,10 @@ namespace GameUI
 
 		public void Run()
 		{
-			StartGameForm startGame = new StartGameForm(4,10);
+			StartGameForm startGame = new StartGameForm();
 			startGame.ShowDialog();
-			GameForm gameForm = new GameForm(startGame.NumberOfGuesses);
-			gameForm.ShowDialog();	
+			//GameForm gameForm = new GameForm(startGame.NumberOfGuesses);
+			//gameForm.ShowDialog();	
 
 		}
 	}

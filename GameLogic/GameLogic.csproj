@@ -39,14 +39,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Board.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="FeedBack.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="InputValidator.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="SecretCode.cs" />
-    <Compile Include="ValidationReuslt.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

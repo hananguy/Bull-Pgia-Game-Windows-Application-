@@ -113,11 +113,11 @@ namespace GameUI
 			// 
 			this.m_WhiteButton.BackColor = System.Drawing.Color.White;
 			this.m_WhiteButton.Location = new System.Drawing.Point(205, 82);
-			this.m_WhiteButton.Name = "button1";
+			this.m_WhiteButton.Name = "m_WhiteButton";
 			this.m_WhiteButton.Size = new System.Drawing.Size(57, 54);
 			this.m_WhiteButton.TabIndex = 7;
 			this.m_WhiteButton.UseVisualStyleBackColor = false;
-			this.m_BrownButton.Click += new System.EventHandler(this.m_WhiteButton_Click);
+			this.m_WhiteButton.Click += new System.EventHandler(this.m_WhiteButton_Click);
 			// 
 			// PickAColorForm
 			// 
