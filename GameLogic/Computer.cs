@@ -6,7 +6,6 @@ namespace GameLogic
 	{
 		private static readonly Random sr_Random = new Random();
 		private SecretCode m_Secret;
-
 		public void CreateSecretCode(char[] i_AvailableCharacters, int i_SecretSize = 4)
 		{
 			char[] secretChars = new char[i_SecretSize];
@@ -35,7 +34,6 @@ namespace GameLogic
 
 			m_Secret = new SecretCode(new string(secretChars));
 		}
-
 		public SecretCode SecretCode
 		{
 			get { return m_Secret; }

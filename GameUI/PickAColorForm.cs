@@ -20,8 +20,6 @@ namespace GameUI
 		private Button m_BrownButton;
 		private Button m_WhiteButton;
 		private Color m_UserChoosenColor;
-
-		
 		public PickAColorForm()
 		{
 			InitializeComponent();
@@ -139,43 +137,36 @@ namespace GameUI
 		{
 			get { return m_UserChoosenColor; }
 		}
-
 		private void m_FuchsiaButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Fuchsia;
 			this.Hide();
 		}
-
 		private void m_RedButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Red;
 			this.Hide();
 		}
-
 		private void m_LimeButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Lime;
 			this.Hide();
 		}
-
 		private void m_AquaButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Aqua;
 			this.Hide();
 		}
-
 		private void m_BlueButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Blue;
 			this.Hide();
 		}
-
 		private void m_YellowButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Yellow;
 			this.Hide();
 		}
-
 		private void m_BrownButton_Click(object sender, EventArgs e)
 		{
 			m_UserChoosenColor = Color.Brown;

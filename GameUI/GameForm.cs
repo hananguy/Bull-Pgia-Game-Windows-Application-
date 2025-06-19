@@ -31,7 +31,6 @@ public partial class GameForm : Form
 		InitializeComponent();
 		InitiallizeCompuerSecretCode(m_GameLogic);
 	}
-
 	void InitializeColorToLetterDictionary()
 	{
 		m_ColorToLetter = new Dictionary<string, string>();
@@ -59,10 +58,10 @@ public partial class GameForm : Form
 	}
 	private void InitializeFormAndButtons()
 	{
-		int buttonSize = 40;
+		int buttonSize = 50;
 		int spacing = 10;
 		int arrowWidth = 30;
-		int arrowHeight = buttonSize;
+		int arrowHeight = buttonSize / 2;
 		int feedbackSize = buttonSize / 2 - 2;
 		int feedbackSpacing = 2;
 		int topMargin = 30;
@@ -74,12 +73,12 @@ public partial class GameForm : Form
 		//The Current Form Size
 		int totalWidth = 4 * (buttonSize + spacing) + spacing + arrowWidth + spacing + 2 * (feedbackSize + feedbackSpacing);
 		int totalHeight = topMargin + buttonSize + computerRowSpacing + m_GameLogic.NumberOfGuessesChoosenByUser * (buttonSize + spacing);
-
-		totalWidth += 40;
-		totalHeight += 10;
-
+		totalWidth += 40;//It was 40
+		totalHeight += 10;//It was 10
 		this.Text = "Bull Pgia";
 		this.ClientSize = new Size(totalWidth, totalHeight);
+		this.StartPosition = FormStartPosition.CenterScreen;
+		this.BackColor = SystemColors.Info;
 	}
 	public void InitiallizeCompuerSecretCode(Game i_GameLogic)
 	{
@@ -89,41 +88,41 @@ public partial class GameForm : Form
 	{
 		string colorByString;
 		string computerCode = m_GameLogic.ComputerPlayer.SecretCode.Code;
+
 		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
 		{
 			colorByString = m_LetterToColor[computerCode[i].ToString()];
 			m_ComputerChooseButtons[i].BackColor = Color.FromName(colorByString);
 		}
 	}
-	private void CreateComputerChooseButtons(int buttonSize, int spacing, int topMargin)
+	private void CreateComputerChooseButtons(int i_ButtonSize, int i_Spacing, int i_TopMargin)
 	{
 		for (int col = 0; col < m_GameLogic.NumberOfPinsToGuess; col++)
 		{
 			Button compBtn = new Button();
 			compBtn.BackColor = Color.Black;
-			compBtn.Size = new Size(buttonSize, buttonSize);
-			compBtn.Location = new Point(col * (buttonSize + spacing), topMargin);
+			compBtn.Size = new Size(i_ButtonSize, i_ButtonSize);
+			compBtn.Location = new Point(col * (i_ButtonSize + i_Spacing), i_TopMargin);
 			compBtn.Enabled = false;
 			this.Controls.Add(compBtn);
 			m_ComputerChooseButtons.Add(compBtn);
 		}
 	}
-
-	private void CreateUserRowsAndArrows(int buttonSize, int spacing, int arrowWidth, int arrowHeight,int feedbackSize, int feedbackSpacing, int topMargin, int computerRowSpacing)
+	private void CreateUserRowsAndArrows(int i_ButtonSize, int i_Spacing, int i_ArrowWidth, int i_ArrowHeight,int i_FeedbackSize, int feedbackSpacing, int topMargin, int computerRowSpacing)
 	{
 		for (int row = 0; row < m_GameLogic.NumberOfGuessesChoosenByUser; row++)
 		{
-			List<Button> buttonRow = CreateColorGuessButtonsRow(row, buttonSize, spacing, topMargin, computerRowSpacing);
+			List<Button> buttonRow = CreateColorGuessButtonsRow(row, i_ButtonSize, i_Spacing, topMargin, computerRowSpacing);
 			m_ColorGuessButtons.Add(buttonRow);
 
-			Button arrowBtn = CreateArrowButton(row, buttonSize, spacing, arrowWidth, arrowHeight, topMargin, computerRowSpacing);
+			Button arrowBtn = CreateArrowButton(row, i_ButtonSize, i_Spacing, i_ArrowWidth, i_ArrowHeight, topMargin + i_ButtonSize / 4, computerRowSpacing);
 			m_ArrowButtons.Add(arrowBtn);
 
-			List<Panel> feedbackRow = CreateFeedbackPanels(row, arrowBtn, arrowWidth, spacing, feedbackSize, feedbackSpacing);
+			List<Panel> feedbackRow = CreateFeedbackPanels(row, arrowBtn, i_ArrowWidth, i_Spacing, i_FeedbackSize, feedbackSpacing);
 			m_FeedbackPanels.Add(feedbackRow);
 		}
-		EnableUserButtonRow(0);
 		
+		EnableUserButtonRow(0);
 	}
 	void EnableUserButtonRow(int i_Row)
 	{
@@ -139,19 +138,17 @@ public partial class GameForm : Form
 			m_ColorGuessButtons[i_Row][i].Enabled = false;
 		}
 	}
-
-	private List<Button> CreateColorGuessButtonsRow(int row, int buttonSize, int spacing, int topMargin, int computerRowSpacing)
+	private List<Button> CreateColorGuessButtonsRow(int i_Row, int i_ButtonSize, int i_Spacing, int i_TopMargin, int i_ComputerRowSpacing)
 	{
-		var buttonRow = new List<Button>();
+		List<Button> buttonRow = new List<Button>();
+
 		for (int col = 0; col < 4; col++)
 		{
 			Button btn = new Button();
-			btn.Size = new Size(buttonSize, buttonSize);
-			btn.Location = new Point(
-				col * (buttonSize + spacing),
-				topMargin + buttonSize + computerRowSpacing + row * (buttonSize + spacing)
-			);
+			btn.Size = new Size(i_ButtonSize, i_ButtonSize);
+			btn.Location = new Point(col * (i_ButtonSize + i_Spacing), i_TopMargin + i_ButtonSize + i_ComputerRowSpacing + i_Row * (i_ButtonSize + i_Spacing));
 			btn.Text = "";
+			btn.BackColor = SystemColors.Info;//Color.LightGray;
 			btn.Enabled = false;
 			btn.Click += new EventHandler(ColorGuessButton_Click);
 			this.Controls.Add(btn);
@@ -160,7 +157,6 @@ public partial class GameForm : Form
 
 		return buttonRow;
 	}
-
 	private bool IsNewColor(Color i_ChoosenColor)
 	{
 		bool isNewColor = true;
@@ -168,60 +164,52 @@ public partial class GameForm : Form
 		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
 		{
 			Color btnColor = m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor;
+
 			if(i_ChoosenColor == btnColor)
 			{
 				isNewColor = false;
 			}
 		}
+
 		return isNewColor;
 	}
-	private Button CreateArrowButton(int row, int buttonSize, int spacing, int arrowWidth, int arrowHeight, int topMargin, int computerRowSpacing)
+	private Button CreateArrowButton(int i_Row, int i_ButtonSize, int i_Spacing, int i_ArrowWidth, int i_ArrowHeight, int i_TopMargin, int i_ComputerRowSpacing)
 	{
-		System.Windows.Forms.Button arrowBtn = new System.Windows.Forms.Button();
-		arrowBtn.Size = new Size(arrowWidth, arrowHeight);
+		Button arrowBtn = new Button();
+		arrowBtn.Size = new Size(i_ArrowWidth, i_ArrowHeight);
 		arrowBtn.Location = new Point(
-			4 * (buttonSize + spacing) + spacing,
-			topMargin + buttonSize + computerRowSpacing + row * (buttonSize + spacing)
+			4 * (i_ButtonSize + i_Spacing) + i_Spacing,
+			i_TopMargin + i_ButtonSize + i_ComputerRowSpacing + i_Row * (i_ButtonSize + i_Spacing)
 		);
 		arrowBtn.Text = "-->";
 		arrowBtn.Click += new EventHandler(ArrowButton_Click);
 		arrowBtn.Enabled = false;
 		this.Controls.Add(arrowBtn);
+
 		return arrowBtn;
 	}
-
-	private List<Panel> CreateFeedbackPanels(int row, Button arrowBtn, int arrowWidth, int spacing, int feedbackSize, int feedbackSpacing)
+	private List<Panel> CreateFeedbackPanels(int i_Row, Button i_ArrowBtn, int i_ArrowWidth, int i_Spacing, int i_FeedbackSize, int i_FeedbackSpacing)
 	{
 		var feedbackRow = new List<Panel>();
-		int feedbackOriginX = arrowBtn.Location.X + arrowWidth + spacing;
-		int feedbackOriginY = arrowBtn.Location.Y;
+		int feedbackOriginX = i_ArrowBtn.Location.X + i_ArrowWidth + i_Spacing;
+		int feedbackOriginY = i_ArrowBtn.Location.Y;
 
 		for (int i = 0; i < 4; i++)
 		{
 			Panel feedbackPanel = new Panel();
-			feedbackPanel.Size = new Size(feedbackSize, feedbackSize);
-			int offsetX = (i % 2) * (feedbackSize + feedbackSpacing);
-			int offsetY = (i / 2) * (feedbackSize + feedbackSpacing);
-			feedbackPanel.Location = new Point(
-				feedbackOriginX + offsetX,
-				feedbackOriginY + offsetY
-			);
+			feedbackPanel.Size = new Size(i_FeedbackSize, i_FeedbackSize);
+			int offsetX = (i % 2) * (i_FeedbackSize + i_FeedbackSpacing);
+			int offsetY = (i / 2) * (i_FeedbackSize + i_FeedbackSpacing);
+			feedbackPanel.Location = new Point(feedbackOriginX + offsetX,feedbackOriginY + offsetY);
 			feedbackPanel.BorderStyle = BorderStyle.FixedSingle;
 			feedbackPanel.BackColor = Color.White;
-			feedbackPanel.Click += FeedbackPanel_Click;
 			feedbackPanel.Enabled = false;
 			this.Controls.Add(feedbackPanel);
 			feedbackRow.Add(feedbackPanel);
 		}
+
 		return feedbackRow;
 	}
-
-	private void FeedbackPanel_Click(object sender, EventArgs e)
-	{
-		Panel panel = sender as Panel;
-		panel.BackColor = panel.BackColor == Color.Red ? Color.White : Color.Red;
-	}
-
 	private void ColorGuessButton_Click(object sender, EventArgs e)
 	{
 		Button clickedButton = sender as Button;
@@ -230,6 +218,7 @@ public partial class GameForm : Form
 		if(IsNewColor(guessColor))
 		{
 			clickedButton.BackColor = guessColor;
+
 			if(IsRowFilled())
 			{
 				m_ArrowButtons[m_GameLogic.CurrentUserTurn].Enabled = true;
@@ -271,6 +260,7 @@ public partial class GameForm : Form
 	public bool UserWin(int i_NumberOfBulls)
 	{
 		bool isUserWin = false;
+
 		if (i_NumberOfBulls == m_GameLogic.NumberOfPinsToGuess)
 		{
 			isUserWin = true;
@@ -282,11 +272,13 @@ public partial class GameForm : Form
 	{
 		StringBuilder playerGuess = new StringBuilder();
 		string ColorOfButtonAsString;
+
 		for (int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
 		{
 			ColorOfButtonAsString = m_ColorToLetter[m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor.Name];
 			playerGuess.Append(ColorOfButtonAsString);
 		}
+
 		return playerGuess.ToString();
 	}
 	void MarkBullAndHitsOnPanels(int i_NumberOfHits, int i_NumberOfBulls)
@@ -308,14 +300,16 @@ public partial class GameForm : Form
 	public bool IsRowFilled()
 	{
 		bool isRowFilled = true;
+
 		for(int i = 0; i < m_GameLogic.NumberOfPinsToGuess; i++)
 		{
-			if(m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor == SystemColors.Control)
+			if(m_ColorGuessButtons[m_GameLogic.CurrentUserTurn][i].BackColor == SystemColors.Info)
 			{
 				isRowFilled = false;
 				break;
 			}
 		}
+
 		return isRowFilled;
 	}
 	public Color GetGuessColorFromUser()
@@ -324,6 +318,7 @@ public partial class GameForm : Form
 		PickAColorForm colorPicking = new PickAColorForm();
 		colorPicking.ShowDialog();
 		color = colorPicking.UserPickedColor;
+
 		return color;
 	}
 }

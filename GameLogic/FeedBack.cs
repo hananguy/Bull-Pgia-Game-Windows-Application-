@@ -11,11 +11,13 @@ namespace GameLogic
 
 		public void Evaluate(SecretCode i_PlayerCode, SecretCode i_ComputerCode)
 		{
-			Reset();
+			ResetBullAndHits();
 
-			char[] computerCodeChars = i_ComputerCode.Code.Replace(" ", "").ToCharArray();
-			char[] playerCodeChars = i_PlayerCode.Code.Replace(" ", "").ToCharArray();
-
+			//char[] computerCodeChars = i_ComputerCode.Code.Replace(" ", "").ToCharArray();
+			//char[] playerCodeChars = i_PlayerCode.Code.Replace(" ", "").ToCharArray();
+			
+			char[] computerCodeChars = i_ComputerCode.Code.ToCharArray();
+			char[] playerCodeChars = i_PlayerCode.Code.ToCharArray();
 			bool[] computerCodeUsedFlags = new bool[computerCodeChars.Length];
 			bool[] playerGuessUsedFlags = new bool[playerCodeChars.Length];
 
@@ -74,7 +76,7 @@ namespace GameLogic
 			return NumberOfBulls == 4;
 		}
 
-		private void Reset()
+		private void ResetBullAndHits()
 		{
 			NumberOfBulls = 0;
 			NumberOfHits = 0;
